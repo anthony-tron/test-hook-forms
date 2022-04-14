@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { Field, Form, Formik } from 'formik';
-import { Autocomplete, Button, Select, TextField } from '@mui/material';
+import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
 import { object, string } from 'yup';
 
 const jobs = [
@@ -12,6 +12,12 @@ const jobs = [
   'Professor',
 ];
 
+const countries = [
+  'India',
+  'China',
+  'Japan',
+];
+
 const validationSchema = object().shape({
   firstName: string().required(),
   lastName: string().required(),
@@ -19,6 +25,7 @@ const validationSchema = object().shape({
   job: object().shape({
     label: string().required()
   }).required(),
+  country: string().required(),
 });
 
 // Thank you! https://github.com/mui/material-ui/issues/18331#issuecomment-569981389
@@ -47,7 +54,7 @@ export default function FormikDemo() {
 
   return (
     <Formik
-      initialValues={{email: '', firstName: '', lastName: '', job: undefined }}
+      initialValues={{email: '', firstName: '', lastName: '', job: undefined, country: countries[0] }}
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
@@ -69,6 +76,16 @@ export default function FormikDemo() {
             <TextField {...params} />
           )}
         />
+
+        <Field as={Select} name="country">
+          {countries.map((country) => (
+            <MenuItem
+              key={country}
+              value={country}>
+              {country}
+            </MenuItem>
+          ))}
+        </Field>
 
         <Button type="submit">
           Submit
