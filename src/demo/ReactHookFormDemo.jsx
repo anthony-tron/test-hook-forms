@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
 import { countries, jobs } from './common';
-import { Field } from 'formik';
 
 export default function ReactHookFormDemo() {
 
@@ -33,7 +32,14 @@ export default function ReactHookFormDemo() {
         )}
       />
 
-      <Select label="Country" {...register('country')}>
+      <Select label="Country" inputProps={{
+        inputRef: (ref) => {
+          if (!ref) return;
+          register('country', {
+            value: ref.value,
+          });
+        }
+      }}>
         {countries.map((country) => (
           <MenuItem
             key={country}
