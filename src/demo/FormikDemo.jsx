@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Field, Form, Formik } from 'formik';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
 import { countries, jobs, validationSchema } from './common';
 
@@ -20,6 +20,23 @@ const FormikAutocomplete = ({form, field, textFieldProps, ...props}) => {
   );
 };
 
+const FormikTextField = ({ form, field, ...props}) => {
+
+  const {setTouched, setFieldValue} = form;
+  const {name} = field;
+
+  return (
+    <TextField
+      name={name}
+      onChange={(event) => setFieldValue(name, event.target.value)}
+      onBlur={() => setTouched({ [name]: true })}
+      error={Boolean(form.errors[name])}
+      helperText={form.errors[name] || ''}
+      {...props}
+    />
+  );
+};
+
 export default function FormikDemo() {
   const handleSubmit = useCallback((values, {setSubmitting}) => {
     setTimeout(() => {
@@ -35,11 +52,11 @@ export default function FormikDemo() {
       validationSchema={validationSchema}
     >
       <Form>
-        <Field as={TextField} type="email" name="email" label="Email"/>
+        <Field component={FormikTextField} type="email" name="email" label="Email"/>
 
-        <Field as={TextField} type="text" name="firstName" label="First name"/>
+        <Field component={FormikTextField} type="text" name="firstName" label="First name"/>
 
-        <Field as={TextField} type="text" name="lastName" label="Last name"/>
+        <Field component={FormikTextField} type="text" name="lastName" label="Last name"/>
 
         <Field
           component={FormikAutocomplete}
