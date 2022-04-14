@@ -2,31 +2,7 @@ import { useCallback } from 'react';
 
 import { Field, Form, Formik } from 'formik';
 import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
-import { object, string } from 'yup';
-
-const jobs = [
-  'Developer',
-  'Manager',
-  'Lawyer',
-  'Student',
-  'Professor',
-];
-
-const countries = [
-  'India',
-  'China',
-  'Japan',
-];
-
-const validationSchema = object().shape({
-  firstName: string().required(),
-  lastName: string().required(),
-  email: string().email().required(),
-  job: object().shape({
-    label: string().required()
-  }).required(),
-  country: string().required(),
-});
+import { countries, jobs, validationSchema } from './common';
 
 // Thank you! https://github.com/mui/material-ui/issues/18331#issuecomment-569981389
 const FormikAutocomplete = ({form, field, textFieldProps, ...props}) => {

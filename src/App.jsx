@@ -6,6 +6,11 @@ export default function App() {
   return (
     <>
       <CssBaseline />
+
+      <h1>
+        Formik demo
+      </h1>
+
       <FormikDemo />
     </>
   );
