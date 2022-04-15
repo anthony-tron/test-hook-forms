@@ -3,24 +3,41 @@ import { Controller, useForm } from 'react-hook-form';
 import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
 import { countries, jobs, validationSchema } from './common';
 
-const yupResolver = (validationSchema) => async (data, context, options) => {
-  let values = {};
-  let errors = {};
+// Thank you! https://react-hook-form.com/advanced-usage#CustomHookwithResolver
+const useYupValidationResolver = (validationSchema) =>
+  useCallback(
+    async (data) => {
+      try {
+        const values = await validationSchema.validate(data, {
+          abortEarly: false
+        });
 
-  try {
-    console.debug({ data, context, options });
-    values = await validationSchema.validate(data);
-  } catch (exceptions) {
-    errors = exceptions;
-  }
-
-  return {
-    values,
-    errors,
-  };
-};
+        return {
+          values,
+          errors: {}
+        };
+      } catch (errors) {
+        return {
+          values: {},
+          errors: errors.inner.reduce(
+            (allErrors, currentError) => ({
+              ...allErrors,
+              [currentError.path]: {
+                type: currentError.type ?? "validation",
+                message: currentError.message
+              }
+            }),
+            {}
+          )
+        };
+      }
+    },
+    [validationSchema]
+);
 
 export default function ReactHookFormDemo() {
+
+  const resolver = useYupValidationResolver(validationSchema);
 
   const { control, register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
@@ -32,7 +49,7 @@ export default function ReactHookFormDemo() {
         label: jobs[0],
       },
     },
-    resolver: yupResolver(validationSchema),
+    resolver,
   });
 
   console.debug({ errors })
@@ -45,11 +62,30 @@ export default function ReactHookFormDemo() {
 
   return (
     <form onSubmit={handleSubmit((submit))}>
-      <TextField label="Email" type="email" {...register('email')} />
+      <TextField
+        required
+        label="Email"
+        type="email"
+        error={!!errors.email}
+        helperText={errors.email?.message}
+        {...register('email')}
+      />
 
-      <TextField label="First name" {...register('firstName')} />
+      <TextField
+        required
+        label="First name"
+        error={!!errors.firstName}
+        helperText={errors.firstName?.message}
+        {...register('firstName')}
+      />
 
-      <TextField label="Last name" {...register('lastName')} />
+      <TextField
+        required
+        label="Last name"
+        error={!!errors.lastName}
+        helperText={errors.lastName?.message}
+        {...register('lastName')}
+      />
 
       <Controller
         control={control}
@@ -63,7 +99,13 @@ export default function ReactHookFormDemo() {
               return value.label === option.label;
             }}
             renderInput={(params) => (
-              <TextField {...params} label="Job" />
+              <TextField
+                {...params}
+                required
+                error={!!errors.job}
+                helperText={errors.job && 'required field'}
+                label="Job"
+              />
             )}
           />
         )}
