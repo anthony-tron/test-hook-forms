@@ -5,7 +5,14 @@ import { countries, jobs } from './common';
 
 export default function ReactHookFormDemo() {
 
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      // only works for TextInput and native HTML inputs
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john.doe@gmail.com',
+    },
+  });
 
   const submit = useCallback((values) => {
     setTimeout(() => {
@@ -28,18 +35,12 @@ export default function ReactHookFormDemo() {
           return value.label === option.label;
         }}
         renderInput={(params) => (
-          <TextField {...params} {...register('job')} />
+          <TextField {...params} label="Job" {...register('job')} />
         )}
+        defaultValue={{ label: jobs[0] }}
       />
 
-      <Select label="Country" inputProps={{
-        inputRef: (ref) => {
-          if (!ref) return;
-          register('country', {
-            value: ref.value,
-          });
-        }
-      }}>
+      <Select name="country" defaultValue={countries[0]} {...register('country')}>
         {countries.map((country) => (
           <MenuItem
             key={country}
