@@ -24,10 +24,10 @@ export default function ReactHookFormDemo() {
 
   const { control, register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      // only works for TextInput and native HTML inputs
       firstName: 'John',
       lastName: 'Doe',
       email: 'john.doe@gmail.com',
+      country: countries[0],
       job: {
         label: jobs[0],
       },
@@ -69,15 +69,21 @@ export default function ReactHookFormDemo() {
         )}
       />
 
-      <Select name="country" defaultValue={countries[0]} {...register('country')}>
-        {countries.map((country) => (
-          <MenuItem
-            key={country}
-            value={country}>
-            {country}
-          </MenuItem>
-        ))}
-      </Select>
+      <Controller
+        control={control}
+        name="country"
+        render={({ field }) => (
+          <Select {...field}>
+            {countries.map((country) => (
+              <MenuItem
+                key={country}
+                value={country}>
+                {country}
+              </MenuItem>
+            ))}
+          </Select>
+        )}
+        />
 
       <Button type="submit">
         Submit
