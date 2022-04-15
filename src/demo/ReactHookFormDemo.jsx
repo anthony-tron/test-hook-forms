@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, Button, Grid, MenuItem, Select, TextField } from '@mui/material';
 import { countries, jobs, validationSchema } from './common';
 
 // Thank you! https://react-hook-form.com/advanced-usage#CustomHookwithResolver
@@ -67,70 +67,76 @@ export default function ReactHookFormDemo() {
 
   return (
     <form onSubmit={handleSubmit((submit))}>
-      <TextField
-        required
-        label="Email"
-        type="email"
-        {...getError('email')}
-        {...register('email')}
-      />
-
-      <TextField
-        required
-        label="First name"
-        {...getError('firstName')}
-        {...register('firstName')}
-      />
-
-      <TextField
-        required
-        label="Last name"
-        {...getError('lastName')}
-        {...register('lastName')}
-      />
-
-      <Controller
-        control={control}
-        name="job"
-        render={({ field }) => (
-          <Autocomplete
-            value={field.value}
-            onChange={(_, item) => field.onChange(item)}
-            options={jobs.map((e) => ({label: e}))}
-            isOptionEqualToValue={(value, option) => {
-              return value.label === option.label;
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                required
-                label="Job"
-                {...getError('job')}
-              />
-            )}
-          />
-        )}
-      />
-
-      <Controller
-        control={control}
-        name="country"
-        render={({ field }) => (
-          <Select {...field}>
-            {countries.map((country) => (
-              <MenuItem
-                key={country}
-                value={country}>
-                {country}
-              </MenuItem>
-            ))}
-          </Select>
-        )}
+      <Grid container item gap={2} md={8}>
+        <TextField
+          required
+          fullWidth
+          label="Email"
+          type="email"
+          {...getError('email')}
+          {...register('email')}
         />
 
-      <Button type="submit">
-        Submit
-      </Button>
+        <TextField
+          required
+          fullWidth
+          label="First name"
+          {...getError('firstName')}
+          {...register('firstName')}
+        />
+
+        <TextField
+          required
+          fullWidth
+          label="Last name"
+          {...getError('lastName')}
+          {...register('lastName')}
+        />
+
+        <Controller
+          control={control}
+          name="job"
+          render={({ field }) => (
+            <Autocomplete
+              fullWidth
+              value={field.value}
+              onChange={(_, item) => field.onChange(item)}
+              options={jobs.map((e) => ({label: e}))}
+              isOptionEqualToValue={(value, option) => {
+                return value.label === option.label;
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  required
+                  label="Job"
+                  {...getError('job')}
+                />
+              )}
+            />
+          )}
+        />
+
+        <Controller
+          control={control}
+          name="country"
+          render={({ field }) => (
+            <Select fullWidth {...field}>
+              {countries.map((country) => (
+                <MenuItem
+                  key={country}
+                  value={country}>
+                  {country}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+          />
+
+        <Button type="submit">
+          Submit
+        </Button>
+      </Grid>
     </form>
   );
 }

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, Button, Grid, MenuItem, Select, TextField } from '@mui/material';
 import { countries, jobs, validationSchema } from './common';
 
 // Thank you! https://github.com/mui/material-ui/issues/18331#issuecomment-569981389
@@ -52,37 +52,65 @@ export default function FormikDemo() {
       validationSchema={validationSchema}
     >
       <Form>
-        <Field component={FormikTextField} type="email" name="email" label="Email"/>
+        <Grid container item gap={2} md={8}>
+          <Field
+            component={FormikTextField}
+            type="email"
+            name="email"
+            label="Email"
+            fullWidth
+            required
+          />
 
-        <Field component={FormikTextField} type="text" name="firstName" label="First name"/>
+          <Field
+            component={FormikTextField}
+            type="text"
+            name="firstName"
+            label="First name"
+            fullWidth
+            required
+          />
 
-        <Field component={FormikTextField} type="text" name="lastName" label="Last name"/>
+          <Field
+            component={FormikTextField}
+            type="text"
+            name="lastName"
+            label="Last name"
+            fullWidth
+            required
+          />
 
-        <Field
-          component={FormikAutocomplete}
-          name="job"
-          options={jobs.map((e) => ({label: e}))}
-          isOptionEqualToValue={(value, option) => {
-            return value.label === option.label;
-          }}
-          renderInput={(params) => (
-            <TextField {...params} />
-          )}
-        />
+          <Field
+            component={FormikAutocomplete}
+            name="job"
+            options={jobs.map((e) => ({label: e}))}
+            isOptionEqualToValue={(value, option) => {
+              return value.label === option.label;
+            }}
+            renderInput={(params) => (
+              <TextField label="Job" required {...params} />
+            )}
+            fullWidth
+          />
 
-        <Field as={Select} name="country">
-          {countries.map((country) => (
-            <MenuItem
-              key={country}
-              value={country}>
-              {country}
-            </MenuItem>
-          ))}
-        </Field>
+          <Field
+            as={Select}
+            name="country"
+            fullWidth
+          >
+            {countries.map((country) => (
+              <MenuItem
+                key={country}
+                value={country}>
+                {country}
+              </MenuItem>
+            ))}
+          </Field>
 
-        <Button type="submit">
-          Submit
-        </Button>
+          <Button type="submit">
+            Submit
+          </Button>
+        </Grid>
       </Form>
     </Formik>
   );
