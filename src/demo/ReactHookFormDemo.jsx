@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
 import { countries, jobs, validationSchema } from './common';
 
@@ -22,12 +22,15 @@ const yupResolver = (validationSchema) => async (data, context, options) => {
 
 export default function ReactHookFormDemo() {
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { control, register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       // only works for TextInput and native HTML inputs
       firstName: 'John',
       lastName: 'Doe',
       email: 'john.doe@gmail.com',
+      job: {
+        label: jobs[0],
+      },
     },
     resolver: yupResolver(validationSchema),
   });
@@ -48,16 +51,22 @@ export default function ReactHookFormDemo() {
 
       <TextField label="Last name" {...register('lastName')} />
 
-      <Autocomplete
+      <Controller
+        control={control}
         name="job"
-        options={jobs.map((e) => ({label: e}))}
-        isOptionEqualToValue={(value, option) => {
-          return value.label === option.label;
-        }}
-        renderInput={(params) => (
-          <TextField {...params} label="Job" {...register('job')} />
+        render={({ field }) => (
+          <Autocomplete
+            value={field.value}
+            onChange={(_, item) => field.onChange(item)}
+            options={jobs.map((e) => ({label: e}))}
+            isOptionEqualToValue={(value, option) => {
+              return value.label === option.label;
+            }}
+            renderInput={(params) => (
+              <TextField {...params} label="Job" />
+            )}
+          />
         )}
-        defaultValue={{ label: jobs[0] }}
       />
 
       <Select name="country" defaultValue={countries[0]} {...register('country')}>
