@@ -44,7 +44,7 @@ export default function ReactHookFormDemo() {
 
   const resolver = useYupValidationResolver(validationSchema);
 
-  const { control, register, handleSubmit, formState: { errors } } = useForm({
+  const { control, register, handleSubmit, formState: { errors }, reset } = useForm({
     defaultValues: {
       firstName: '',
       lastName: '',
@@ -133,6 +133,10 @@ export default function ReactHookFormDemo() {
 
         <Button type="submit">
           Submit
+        </Button>
+
+        <Button color="secondary" onClick={() => reset()}>
+          Reset to default values
         </Button>
       </Grid>
     </form>

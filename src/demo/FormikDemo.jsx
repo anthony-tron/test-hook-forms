@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { ErrorMessage, Field, Form, Formik, useField } from 'formik';
 import { Autocomplete, Button, Grid, MenuItem, Select, TextField } from '@mui/material';
 import { countries, jobs, validationSchema } from './common';
 
@@ -20,18 +20,16 @@ const FormikAutocomplete = ({form, field, textFieldProps, ...props}) => {
   );
 };
 
-const FormikTextField = ({ form, field, ...props}) => {
+const FormikTextField = ({ ...props}) => {
 
-  const {setTouched, setFieldValue} = form;
-  const {name} = field;
+  const [field, meta] = useField({ ...props, type: 'text' });
 
   return (
     <TextField
       name={name}
-      onChange={(event) => setFieldValue(name, event.target.value)}
-      onBlur={() => setTouched({ [name]: true })}
-      error={Boolean(form.errors[name])}
-      helperText={form.errors[name] || ''}
+      error={Boolean(meta.touched && meta.error)}
+      helperText={meta.touched ? meta.error : ''}
+      {...field}
       {...props}
     />
   );
@@ -51,67 +49,71 @@ export default function FormikDemo() {
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
-      <Form>
-        <Grid container item gap={2} md={8}>
-          <Field
-            component={FormikTextField}
-            type="email"
-            name="email"
-            label="Email"
-            fullWidth
-            required
-          />
+      {({ resetForm }) => (
 
-          <Field
-            component={FormikTextField}
-            type="text"
-            name="firstName"
-            label="First name"
-            fullWidth
-            required
-          />
+        <Form>
+          <Grid container item gap={2} md={8}>
+            <FormikTextField
+              type="email"
+              name="email"
+              label="Email"
+              fullWidth
+              required
+            />
 
-          <Field
-            component={FormikTextField}
-            type="text"
-            name="lastName"
-            label="Last name"
-            fullWidth
-            required
-          />
+            <FormikTextField
+              type="text"
+              name="firstName"
+              label="First name"
+              fullWidth
+              required
+            />
 
-          <Field
-            component={FormikAutocomplete}
-            name="job"
-            options={jobs.map((e) => ({label: e}))}
-            isOptionEqualToValue={(value, option) => {
-              return value.label === option.label;
-            }}
-            renderInput={(params) => (
-              <TextField label="Job" required {...params} />
-            )}
-            fullWidth
-          />
+            <FormikTextField
+              type="text"
+              name="lastName"
+              label="Last name"
+              fullWidth
+              required
+            />
 
-          <Field
-            as={Select}
-            name="country"
-            fullWidth
-          >
-            {countries.map((country) => (
-              <MenuItem
-                key={country}
-                value={country}>
-                {country}
-              </MenuItem>
-            ))}
-          </Field>
+            <Field
+              component={FormikAutocomplete}
+              name="job"
+              options={jobs.map((e) => ({label: e}))}
+              isOptionEqualToValue={(value, option) => {
+                return value.label === option.label;
+              }}
+              renderInput={(params) => (
+                <TextField label="Job" required {...params} />
+              )}
+              fullWidth
+            />
 
-          <Button type="submit">
-            Submit
-          </Button>
-        </Grid>
-      </Form>
+            <Field
+              as={Select}
+              name="country"
+              fullWidth
+            >
+              {countries.map((country) => (
+                <MenuItem
+                  key={country}
+                  value={country}>
+                  {country}
+                </MenuItem>
+              ))}
+            </Field>
+
+            <Button type="submit">
+              Submit
+            </Button>
+
+            <Button color="secondary" onClick={() => resetForm()}>
+              Reset to default values
+            </Button>
+          </Grid>
+        </Form>
+      )}
     </Formik>
   );
 }
