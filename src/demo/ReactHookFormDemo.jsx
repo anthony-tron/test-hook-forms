@@ -35,6 +35,16 @@ const useYupValidationResolver = (validationSchema) =>
     [validationSchema]
 );
 
+const muiBind = (errors, fieldName) => ({
+  error: !!errors[fieldName],
+  helperText: errors[fieldName]?.message,
+});
+
+const useEnhancedRegister = (bind) => (register, errors) => (fieldName, ...args) => ({
+  ...register(fieldName, ...args),
+  ...bind(errors, fieldName),
+});
+
 export default function ReactHookFormDemo() {
 
   const resolver = useYupValidationResolver(validationSchema);
@@ -52,7 +62,7 @@ export default function ReactHookFormDemo() {
     resolver,
   });
 
-  console.debug({ errors })
+  const reg = useEnhancedRegister(muiBind)(register, errors);
 
   const submit = useCallback((values) => {
     setTimeout(() => {
@@ -66,25 +76,19 @@ export default function ReactHookFormDemo() {
         required
         label="Email"
         type="email"
-        error={!!errors.email}
-        helperText={errors.email?.message}
-        {...register('email')}
+        {...reg('email')}
       />
 
       <TextField
         required
         label="First name"
-        error={!!errors.firstName}
-        helperText={errors.firstName?.message}
-        {...register('firstName')}
+        {...reg('firstName')}
       />
 
       <TextField
         required
         label="Last name"
-        error={!!errors.lastName}
-        helperText={errors.lastName?.message}
-        {...register('lastName')}
+        {...reg('lastName')}
       />
 
       <Controller
