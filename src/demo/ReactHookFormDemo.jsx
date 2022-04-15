@@ -46,13 +46,11 @@ export default function ReactHookFormDemo() {
 
   const { control, register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john.doe@gmail.com',
+      firstName: '',
+      lastName: '',
+      email: '',
       country: countries[0],
-      job: {
-        label: jobs[0],
-      },
+      job: null,
     },
     resolver,
   });
