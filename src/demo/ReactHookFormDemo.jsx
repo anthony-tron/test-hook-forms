@@ -1,18 +1,38 @@
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { Autocomplete, Button, MenuItem, Select, TextField } from '@mui/material';
-import { countries, jobs } from './common';
+import { countries, jobs, validationSchema } from './common';
+
+const yupResolver = (validationSchema) => async (data, context, options) => {
+  let values = {};
+  let errors = {};
+
+  try {
+    console.debug({ data, context, options });
+    values = await validationSchema.validate(data);
+  } catch (exceptions) {
+    errors = exceptions;
+  }
+
+  return {
+    values,
+    errors,
+  };
+};
 
 export default function ReactHookFormDemo() {
 
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       // only works for TextInput and native HTML inputs
       firstName: 'John',
       lastName: 'Doe',
       email: 'john.doe@gmail.com',
     },
+    resolver: yupResolver(validationSchema),
   });
+
+  console.debug({ errors })
 
   const submit = useCallback((values) => {
     setTimeout(() => {
